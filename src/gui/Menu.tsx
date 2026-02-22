@@ -32,7 +32,7 @@ export function Menu() {
   return (
     <Menubar className="h-[48px] border-b">
       <LucideSchool className="mr-4" />
-      <div className="font-bold">CS-1001</div>
+      <div className="font-bold">REACT - Powerworkshop</div>
       <MenubarMenu>
         <MenubarTrigger>Main</MenubarTrigger>
         <MenubarContent>
