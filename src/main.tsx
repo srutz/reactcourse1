@@ -3,14 +3,18 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import { createBrowserRouter, RouterProvider } from 'react-router'
 import { App } from './App.tsx'
-import { Excercise1 } from './exercises/Excercise1.tsx'
+import Exercise1 from './exercises/Exercise1.tsx'
+import { Main } from './gui/Main.tsx'
 
 const router = createBrowserRouter([
   {
     path: "/", element: <App />, children: [
       {
-        path: "exercise1", element: <Excercise1 />,
-      }
+        path: "/", element: <Main />,
+      },
+      {
+        path: "/exercise1", element: <Exercise1 />,
+      },
     ]
   }
 ])

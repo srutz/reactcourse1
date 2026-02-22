@@ -1,118 +1,73 @@
 import { LucideSchool } from "lucide-react"
+import { useNavigate } from "react-router"
 import {
   Menubar,
-  MenubarCheckboxItem,
   MenubarContent,
   MenubarGroup,
   MenubarItem,
   MenubarMenu,
   MenubarSeparator,
-  MenubarShortcut,
-  MenubarSub,
-  MenubarSubContent,
-  MenubarSubTrigger,
   MenubarTrigger,
 } from "@/components/ui/menubar"
 
 export function Menu() {
+
+  const exercises = [
+    {
+      name: "Exercise 1",
+      path: "/exercise1",
+    },
+    {
+      name: "Exercise 2",
+      path: "/exercise2",
+    },
+  ]
+
+  const navigate = useNavigate()
+
+  const handleExercise = (exercise: { name: string; path: string }) => {
+    navigate(exercise.path)
+  }
+
   return (
     <Menubar className="h-[48px] border-b">
       <LucideSchool className="mr-4" />
+      <div className="font-bold">CS-1001</div>
       <MenubarMenu>
-        <MenubarTrigger>File</MenubarTrigger>
+        <MenubarTrigger>Main</MenubarTrigger>
         <MenubarContent>
           <MenubarGroup>
-            <MenubarItem>
-              New Tab <MenubarShortcut>⌘T</MenubarShortcut>
+            <MenubarItem onSelect={() => navigate("/")}>
+              Main-Page
             </MenubarItem>
-            <MenubarItem>
-              New Window <MenubarShortcut>⌘N</MenubarShortcut>
-            </MenubarItem>
-            <MenubarItem disabled>New Incognito Window</MenubarItem>
           </MenubarGroup>
           <MenubarSeparator />
           <MenubarGroup>
-            <MenubarSub>
-              <MenubarSubTrigger>Share</MenubarSubTrigger>
-              <MenubarSubContent>
-                <MenubarGroup>
-                  <MenubarItem>Email link</MenubarItem>
-                  <MenubarItem>Messages</MenubarItem>
-                  <MenubarItem>Notes</MenubarItem>
-                </MenubarGroup>
-              </MenubarSubContent>
-            </MenubarSub>
-          </MenubarGroup>
-          <MenubarSeparator />
-          <MenubarGroup>
-            <MenubarItem>
-              Print... <MenubarShortcut>⌘P</MenubarShortcut>
+            <MenubarItem onSelect={() => {
+              // open https://github.com/srutz/reactsolitaire in new tab
+              window.open(
+                "https://github.com/srutz/reactsolitaire",
+                "_blank",
+                "noopener,noreferrer"
+              )
+            }}>
+              Solitaire
             </MenubarItem>
           </MenubarGroup>
         </MenubarContent>
       </MenubarMenu>
       <MenubarMenu>
-        <MenubarTrigger>Edit</MenubarTrigger>
+        <MenubarTrigger>Excercises</MenubarTrigger>
         <MenubarContent>
           <MenubarGroup>
-            <MenubarItem>
-              Undo <MenubarShortcut>⌘Z</MenubarShortcut>
-            </MenubarItem>
-            <MenubarItem>
-              Redo <MenubarShortcut>⇧⌘Z</MenubarShortcut>
-            </MenubarItem>
-          </MenubarGroup>
-          <MenubarSeparator />
-          <MenubarGroup>
-            <MenubarSub>
-              <MenubarSubTrigger>Find</MenubarSubTrigger>
-              <MenubarSubContent>
-                <MenubarGroup>
-                  <MenubarItem>Search the web</MenubarItem>
-                </MenubarGroup>
-                <MenubarSeparator />
-                <MenubarGroup>
-                  <MenubarItem>Find...</MenubarItem>
-                  <MenubarItem>Find Next</MenubarItem>
-                  <MenubarItem>Find Previous</MenubarItem>
-                </MenubarGroup>
-              </MenubarSubContent>
-            </MenubarSub>
-          </MenubarGroup>
-          <MenubarSeparator />
-          <MenubarGroup>
-            <MenubarItem>Cut</MenubarItem>
-            <MenubarItem>Copy</MenubarItem>
-            <MenubarItem>Paste</MenubarItem>
+            {exercises.map((exercise) => (
+              <MenubarItem key={exercise.name} onSelect={() => handleExercise(exercise)}>
+                {exercise.name}
+              </MenubarItem>
+            ))}
           </MenubarGroup>
         </MenubarContent>
       </MenubarMenu>
-      <MenubarMenu>
-        <MenubarTrigger>View</MenubarTrigger>
-        <MenubarContent className="w-44">
-          <MenubarGroup>
-            <MenubarCheckboxItem>Bookmarks Bar</MenubarCheckboxItem>
-            <MenubarCheckboxItem checked>Full URLs</MenubarCheckboxItem>
-          </MenubarGroup>
-          <MenubarSeparator />
-          <MenubarGroup>
-            <MenubarItem inset>
-              Reload <MenubarShortcut>⌘R</MenubarShortcut>
-            </MenubarItem>
-            <MenubarItem disabled inset>
-              Force Reload <MenubarShortcut>⇧⌘R</MenubarShortcut>
-            </MenubarItem>
-          </MenubarGroup>
-          <MenubarSeparator />
-          <MenubarGroup>
-            <MenubarItem inset>Toggle Fullscreen</MenubarItem>
-          </MenubarGroup>
-          <MenubarSeparator />
-          <MenubarGroup>
-            <MenubarItem inset>Hide Sidebar</MenubarItem>
-          </MenubarGroup>
-        </MenubarContent>
-      </MenubarMenu>
-    </Menubar>
+    </Menubar >
   )
 }
