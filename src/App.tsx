@@ -1,12 +1,13 @@
 
-import Exercise1 from "./exercises/Exercise1";
+import { Outlet } from "react-router";
+import { Menu } from "./gui/Menu";
 
 export function App() {
   return (
-    <div className="w-screen h-screen bg-white flex flex-col p-8">
-      <div className="bg-zinc-100 grow flex flex-col">
-        <h1 className="text-2xl font-bold">Code your stuff</h1>
-        <Exercise1 />
+    <div className="w-screen h-screen bg-white flex flex-col p-0">
+      <Menu />
+      <div className="grow flex flex-col bg-zinc-200">
+        <Outlet></Outlet>
       </div>
     </div>
   )

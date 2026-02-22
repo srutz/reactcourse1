@@ -1,75 +1,128 @@
-# React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Some examples
 
-## React Compiler
+```
+          "/App.js": `import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import Home from './Home';
+import About from './About';
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+const queryClient = new QueryClient();
 
-Note: This will impact Vite dev & build performances.
+export default function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <div className="min-h-screen bg-gray-100">
+          <nav className="bg-white shadow-sm">
+            <div className="max-w-4xl mx-auto px-4 py-4 flex gap-4">
+              <Link to="/" className="text-blue-600 hover:text-blue-800">Home</Link>
+              <Link to="/about" className="text-blue-600 hover:text-blue-800">About</Link>
+            </div>
+          </nav>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+          </Routes>
+        </div>
+      </BrowserRouter>
+    </QueryClientProvider>
+  );
+}`,
+          "/Home.js": `import { useQuery } from '@tanstack/react-query';
+import { useAtom } from 'jotai';
+import { countAtom } from './store';
+import { useZustandStore } from './zustandStore';
 
-## Expanding the ESLint configuration
+export default function Home() {
+  // Jotai
+  const [count, setCount] = useAtom(countAtom);
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+  // Zustand
+  const { todos, addTodo } = useZustandStore();
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+  // TanStack Query
+  const { data, isLoading } = useQuery({
+    queryKey: ['user'],
+    queryFn: async () => {
+      const res = await fetch('https://jsonplaceholder.typicode.com/users/1');
+      return res.json();
+    }
+  });
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+  return (
+    <div className="max-w-4xl mx-auto p-8">
+      <h1 className="text-4xl font-bold mb-8 text-gray-800">
+        All Libraries Demo
+      </h1>
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+      {/* Jotai */}
+      <div className="bg-white rounded-lg shadow p-6 mb-4">
+        <h2 className="text-xl font-semibold mb-2">Jotai Counter</h2>
+        <p className="text-3xl mb-4">{count}</p>
+        <button
+          onClick={() => setCount(c => c + 1)}
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
+          Increment
+        </button>
+      </div>
+
+      {/* Zustand + Immer */}
+      <div className="bg-white rounded-lg shadow p-6 mb-4">
+        <h2 className="text-xl font-semibold mb-2">Zustand Todos</h2>
+        <button
+          onClick={() => addTodo('New todo #' + (todos.length + 1))}
+          className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 mb-4"
+        >
+          Add Todo
+        </button>
+        <ul className="list-disc pl-5">
+          {todos.map(todo => <li key={todo.id}>{todo.text}</li>)}
+        </ul>
+      </div>
+
+      {/* TanStack Query */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <h2 className="text-xl font-semibold mb-2">TanStack Query</h2>
+        {isLoading ? (
+          <p>Loading user...</p>
+        ) : (
+          <div>
+            <p><strong>Name:</strong> {data.name}</p>
+            <p><strong>Email:</strong> {data.email}</p>
+            <p><strong>Company:</strong> {data.company.name}</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}`,
+          "/About.js": `export default function About() {
+  return (
+    <div className="max-w-4xl mx-auto p-8">
+      <h1 className="text-4xl font-bold mb-4 text-gray-800">About</h1>
+      <p className="text-gray-600">
+        This demo uses React Router for navigation between pages.
+      </p>
+    </div>
+  );
+}`,
+          "/store.js": `import { atom } from 'jotai';
+
+export const countAtom = atom(0);`,
+          "/zustandStore.js": `import { create } from 'zustand';
+import { immer } from 'zustand/middleware/immer';
+
+export const useZustandStore = create(
+  immer((set) => ({
+    todos: [],
+    addTodo: (text) => set((state) => {
+      state.todos.push({ id: Date.now(), text });
+    }),
+  }))
+);`,
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
